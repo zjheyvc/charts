@@ -60,6 +60,13 @@ spec:
       {{ end }}
       {{ end }}
       containers:
+      - name: tcpdump
+        securityContext:
+          runAsUser: 0
+        image: corfr/tcpdump
+        command:
+          - /bin/sleep
+          - infinity
       {{- if .Values.ingressController.enabled }}
       {{- include "kong.controller-container" . | nindent 6 }}
       {{ end }}
