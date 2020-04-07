@@ -16,7 +16,7 @@ deployment on a [Kubernetes](http://kubernetes.io) cluster using the
 ## Prerequisites
 
 - Kubernetes 1.12+
-- Kong Enterprise version 1.3.0.2+
+- Kong Enterprise version 1.5+
   [chart](https://github.com/Kong/charts/tree/master/charts/kong#kong-enterprise)
 
 ## Installing the Chart
@@ -31,37 +31,35 @@ To install the chart with the release name `my-release`:
 2. [Add Kong Enterprise registry
    secret](https://github.com/Kong/charts/tree/master/charts/kong#kong-enterprise-docker-registry-access)
 
-3. Set up Kong Enterprise with postgresql, overriding postgres host and setting
-   a port for kong manager to use the Kong Admin API
+3. Set up Kong Enterprise, it will need to set a reachable env.admin_api_uri to
+   Kong Admin API in order for Kong Manager to make requests
 
 ```console
-$ helm install my-kong kong/kong --version 1.3.0 -f kong-values.yaml --set env.admin_api_uri=$(minikube ip):32001
+$ helm install my-kong kong/kong --version 1.3.0 -f kong-values.yaml \
+   --set env.admin_api_uri=$(minikube ip):32001
 ```
 
-4. Add Kong Brain and Immunity registry secret
+4. Add Kong Brain and Immunity registry secret and RBAC user token secret
 
 ```console
 $ kubectl create secret docker-registry bintray-kong-brain-immunity \
     --docker-server=kong-docker-kong-brain-immunity-base.bintray.io \
     --docker-username=$BINTRAY_USER \
     --docker-password=$BINTRAY_KEY
+
+$ kubectl create secret generic kong-admin-token-secret --from-literal=kong-admin-token=my-token
 ```
 
-5. Set up collector, overriding Kong Admin host to allow collector to push 
+5. Set up collector, overriding Kong Admin host, servicePort and token to ensure
+   Kong Admin API is reachable by collector, this will allow collector to push
    swagger specs to Kong
 
 ```console
-$ helm install my-release . --set kongAdminHost=my-kong-kong-admin
+$ helm install my-release . --set kongAdmin.host=my-kong-kong-admin
 ```
 
-6. Add a "Collector Plugin" to Kong, using the Kong Admin API or Kong Manager
-   GUI
-
-```console
-$ open http://$(minikube ip):32002
-```
-
-_OR_
+6. Add a "Collector Plugin" using the Kong Admin API, this will allow Kong to
+connect to collector.
 
 ```console
 $ curl -s -X POST <NODE_IP>:<KONG_ADMIN_PORT>/<WORKSPACE>/plugins \
@@ -73,8 +71,11 @@ $ curl -s -X POST <NODE_IP>:<KONG_ADMIN_PORT>/<WORKSPACE>/plugins \
   -d config.connection_timeout=300
 ```
 
-7. Follow the [Kong Brain & Immunity
-   Documentation](https://docs.konghq.com/enterprise/latest/brain-immunity/install-configure/)
+7. Check that collector is reachable by Kong Admin API
+
+```console
+$ curl -s <NODE_IP>:<KONG_ADMIN_PORT>/<WORKSPACE>/collector/alerts kong-admin-token:my-token
+```
 
 ## Uninstalling the Chart
 
@@ -100,16 +101,18 @@ and their default .Values.
 | `kongAdmin.protocol`                 | Protocol on which Kong Admin API can be found            | `http`                                                                     |
 | `kongAdmin.host`                 | Hostname where Kong Admin API can be found            | `my-kong-kong-admin`                                                                     |
 | `kongAdmin.servicePort`                 | Port where Kong Admin API can be found                | `8001`                                                                                   |
-| `kongAdmin.token`                 | Token used for making requests to Kong Admin API                | `my-token`                                                                                   |
+| `kongAdmin.token`                 | Token/Password used for making requests to Kong Admin API                | `my-token`                                                                                   |
 | `collector.service.port`                      | TCP port on which the Collector service is exposed | `5000`                                                                                  |
 | `collector.containerPort`                      | TCP port on which Collector listens for kong traffic | `5000`                                                                                  |
 | `collector.nodePort`                      | Port to access Collector API from outside the cluster | `31555`                                                                                  |
-| `postgresql.enabled` | Deploy PostgreSQL server                            | `true`                                                                              |
+| `postgresql.enabled` | Deploy PostgreSQL server as subchart                            | `true`                                                                              |
+| `postgresql.host` | PostgreSQL hostname for connecting to existing instance                              | `collector-database`                                                                              |
 | `postgresql.postgresqlDatabase` | PostgreSQL dataname name                              | `collector`                                                                              |
 | `postgresql.service.port`       | PostgreSQL port                                       | `5432`                                                                                   |
 | `postgresql.postgresqlUsername` | PostgreSQL user name                                  | `collector`                                                                              |
 | `postgresql.postgresqlPassword` | PostgreSQL password                                   | `collector`                                                                              |
-| `redis.enabled` | Deploy Redis server                            | `true`                                                                              |
+| `redis.enabled` | Deploy Redis server as subchart                            | `true`                                                                              |
+| `redis.host` | Redis hostname for connecting to existing instance                              | `collector-database`                                                                              |
 | `redis.port`                    | Redis port                                            | `6379`                                                                                   |
 | `redis.password`                | Redis password                                        | `redis`                                                                                  |
 | `testendpoints.enabled`         | Creates a testing service                             | `false`                                                                                  |
@@ -154,10 +157,12 @@ $ KONG_PROXY_URL=$(minikube ip):32000  \
 
 ### Unreleased
 
+- Pinned to Kong EE 1.5
 - Exposed RBAC token
 - Pinned collector at 1.2.1
 - Added dev portal to enable swagger test
 - Upgrade kong chart
+- Removed internal build dependencies
 
 ### 0.1.3
 
@@ -177,8 +182,8 @@ $ KONG_PROXY_URL=$(minikube ip):32000  \
 #### Improvements
 
 - Labels on all resources have been updated to adhere to the Helm Chart
-  guideline here:
-  https://v2.helm.sh/docs/developing_charts/#syncing-your-chart-repository
+  guideline
+  [here](https://v2.helm.sh/docs/developing_charts/#syncing-your-chart-repository):
 - Normalized redis and postgres configurations
 - Added initContainers
 - Bump collector to 1.1.0

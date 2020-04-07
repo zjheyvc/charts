@@ -2,18 +2,16 @@ image:
   repository: kong-docker-kong-brain-immunity-base.bintray.io/kong-brain-immunity
   tag: 1.2.1
   pullPolicy: IfNotPresent
-  # repository: kong-docker-kong-brain-internal-builds.bintray.io/kong-brain
-  # tag: master
 
 imagePullSecrets:
   - name: bintray-kong-brain-immunity
-  - name: bintray-kong-brain-internal
 
 waitImage:
   repository: busybox
   tag: latest
   pullPolicy: IfNotPresent
 
+# These parameters enable collector to send requests to Kong Admin API
 kongAdmin:
   # Set this to the Kong Admin API hostname
   host: my-kong-kong-admin
@@ -21,8 +19,12 @@ kongAdmin:
   servicePort: 8001
   # Set this to the Kong Admin API protocol
   protocol: http
-  # Set this to the Kong Admin API token
-  token: my-token
+  # Set this to the Kong Admin API token / KONG_PASSWORD
+  token:
+    valueFrom:
+      secretKeyRef:
+        name: kong-admin-token-secret
+        key: kong-admin-token
 
 collector:
   containerPort: 5000
@@ -33,21 +35,25 @@ collector:
     port: 5000
 
 postgresql:
+  ## Set to false if bringing your own postgresql
   enabled: true
   postgresqlUsername: collector
   postgresqlPassword: collector
   postgresqlDatabase: collector
   service:
     port: 5432
+    # host: collector-postgresql # uncomment if bringing your own postgresql
 
 redis:
+  ## Set to false if bringing your own redis.
   enabled: true
   port: 6379
   password: redis
+  # host: collector-redis-master # uncomment if bringing your own redis
 
 ingress:
   enabled: false
 
-# Enable this for running integration tests
+# Enable this only for running integration tests
 testendpoints:
-  enabled: true
+  enabled: false
