@@ -584,9 +584,11 @@ Environment variables are sorted alphabetically
   image: "{{ .Values.waitImage.unifiedRepoTag }}"
 {{- else }}
   image: "{{ .Values.waitImage.repository }}:{{ .Values.waitImage.tag }}"
+  securityContext:
+    runAsUser: 0
 {{- end }}
   imagePullPolicy: {{ .Values.waitImage.pullPolicy }}
   env:
   {{- include "kong.no_daemon_env" . | nindent 2 }}
-  command: [ "/bin/sh", "-c", "set -u; until nc -zv $KONG_PG_HOST $KONG_PG_PORT -w1; do echo \"waiting for db - trying ${KONG_PG_HOST}:${KONG_PG_PORT}\"; sleep 1; done" ]
+  command: [ "/bin/sh", "-c", "set -u; yum -y install nmap-ncat; until ncat -zv $KONG_PG_HOST $KONG_PG_PORT -w1; do echo \"waiting for db - trying ${KONG_PG_HOST}:${KONG_PG_PORT}\"; sleep 1; done" ]
 {{- end -}}
