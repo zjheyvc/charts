@@ -218,6 +218,10 @@ The name of the service used for the ingress controller's validation webhook
   emptyDir: {}
 - name: {{ template "kong.fullname" . }}-tmp
   emptyDir: {}
+- name: {{ template "kong.fullname" . }}-bash-wait-for-postgres
+  configMap:
+    name: {{ template "kong.fullname" . }}-bash-wait-for-postgres
+    defaultMode: 0755
 {{- range .Values.plugins.configMaps }}
 - name: kong-plugin-{{ .pluginName }}
   configMap:
@@ -584,11 +588,12 @@ Environment variables are sorted alphabetically
   image: "{{ .Values.waitImage.unifiedRepoTag }}"
 {{- else }}
   image: "{{ .Values.waitImage.repository }}:{{ .Values.waitImage.tag }}"
-  securityContext:
-    runAsUser: 0
 {{- end }}
   imagePullPolicy: {{ .Values.waitImage.pullPolicy }}
   env:
   {{- include "kong.no_daemon_env" . | nindent 2 }}
-  command: [ "/bin/sh", "-c", "set -u; yum -y install nmap-ncat; until ncat -zv $KONG_PG_HOST $KONG_PG_PORT -w1; do echo \"waiting for db - trying ${KONG_PG_HOST}:${KONG_PG_PORT}\"; sleep 1; done" ]
+  command: [ "/bin/bash", "/wait_postgres/wait.sh" ]
+  volumeMounts:
+  - name: {{ template "kong.fullname" . }}-bash-wait-for-postgres
+    mountPath: /wait_postgres
 {{- end -}}
