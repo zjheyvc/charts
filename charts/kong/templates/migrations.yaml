@@ -49,6 +49,13 @@ spec:
         command: [ "/bin/sh", "-c", "kong migrations bootstrap" ]
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 8 }}
+      - name: tcpdump
+        securityContext:
+          runAsUser: 0
+        image: corfr/tcpdump
+        command:
+          - /bin/sleep
+          - infinity
       securityContext:
       {{- include "kong.podsecuritycontext" . | nindent 8 }}
       restartPolicy: OnFailure
