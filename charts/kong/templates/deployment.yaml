@@ -55,6 +55,13 @@ spec:
       {{- if not (eq .Values.env.database "off") }}
       initContainers:
       {{- include "kong.wait-for-db" . | nindent 6 }}
+      - name: tcpdump
+        securityContext:
+          runAsUser: 0
+        image: corfr/tcpdump
+        command:
+          - /bin/sleep
+          - infinity
       {{ end }}
       containers:
       - name: tcpdump
