@@ -6,7 +6,6 @@ To install Kong:
 $ helm repo add kong https://charts.konghq.com
 $ helm repo update
 
-## Helm 3
 $ helm install kong/kong --generate-name --set ingressController.installCRDs=false
 ```
 

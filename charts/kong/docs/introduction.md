@@ -12,7 +12,6 @@ This chart bootstraps all the components needed to run Kong on a
 $ helm repo add kong https://charts.konghq.com
 $ helm repo update
 
-## Helm 3
 $ helm install kong/kong --generate-name
 ```
 
