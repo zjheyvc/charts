@@ -8,7 +8,7 @@ along-with DB-less mode.
 
 Following sections detail on various high-level architecture options available:
 
-# Database
+## Database
 
 Kong can run with or without a database (DB-less).
 By default, this chart installs Kong without a database.
@@ -29,7 +29,7 @@ the support has now been dropped due to stability issues.
 You can still deploy Cassandra on your own and configure Kong to use
 that via the `env.database` parameter.
 
-## DB-less  deployment
+### DB-less  deployment
 
 When deploying Kong in DB-less mode(`env.database: "off"`)
 and without the Ingress Controller(`ingressController.enabled: false`),
@@ -40,7 +40,7 @@ The configuration can be provided using an existing ConfigMap
 parameter. See the example configuration in the default values.yaml
 for more details.
 
-# Runtime package
+## Runtime package
 
 There are two different packages of Kong that are available:
 
@@ -59,7 +59,7 @@ The package to run can be changed via `image.repository` and `image.tag`
 parameters. If you would like to run the Enterprise package, please read
 the [Kong Enterprise Parameters](#kong-enterprise-parameters) section.
 
-# Configuration method
+## Configuration method
 
 Kong can be configured via two methods:
 - **Ingress and CRDs**\
@@ -78,7 +78,7 @@ Kong can be configured via two methods:
   By default, the Admin API of Kong is not exposed as a Service. This
   can be controlled via `admin.enabled` and `env.admin_listen` parameters.
 
-# Separate admin and proxy nodes
+## Separate admin and proxy nodes
 
 *Note: although this section is titled "Separate admin and proxy nodes", this
 split release technique is generally applicable to any deployment with
@@ -122,7 +122,7 @@ helm install proxy-only -f shared-values.yaml -f only-proxy.yaml kong/kong
 helm install admin-only -f shared-values.yaml -f only-admin.yaml kong/kong
 ```
 
-# Standalone controller nodes
+## Standalone controller nodes
 
 The chart can deploy releases that contain the controller only, with no Kong
 container, by setting `deployment.kong.enabled: false` in values.yaml. There
@@ -144,7 +144,7 @@ scenario and several settings that are useful when using multiple controllers:
 Standalone controllers require a database-backed Kong instance, as DB-less mode
 requires that a single controller generate a complete Kong configuration.
 
-# Hybrid mode
+## Hybrid mode
 
 Kong supports [hybrid mode
 deployments](https://docs.konghq.com/2.0.x/hybrid-mode/) as of Kong 2.0.0 and
@@ -163,7 +163,7 @@ values.yaml specifics for each.
 Cluster certificates are not generated automatically. You must [create a
 certificate and key pair](#certificates) for intra-cluster communication.
 
-## Certificates
+### Certificates
 
 Hybrid mode uses TLS to secure the CP/DP node communication channel, and
 requires certificates for it. You can generate these either using `kong hybrid
@@ -181,7 +181,7 @@ You must then place these certificates in a Secret:
 kubectl create secret tls kong-cluster-cert --cert=/tmp/cluster.crt --key=/tmp/cluster.key
 ```
 
-## Control plane node configuration
+### Control plane node configuration
 
 You must configure the control plane nodes to mount the certificate secret on
 the container filesystem is serve it from the cluster listen. In values.yaml:
@@ -237,7 +237,7 @@ ingressController:
 Replace `hybrid` with your DP nodes' namespace and `example-release-data` with
 the name of the DP release.
 
-## Data plane node configuration
+### Data plane node configuration
 
 Data plane configuration also requires the certificate and `role`
 configuration, and the database should always be set to `off`. You must also
@@ -276,7 +276,7 @@ documentation on Service
 DNS](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 for more detail.
 
-# CRDs only
+## CRDs only
 
 TODO rewrite for Helm 3 only
 
@@ -290,7 +290,7 @@ On Helm 3, CRDs are created if necessary, but are not managed along with the
 release. Releases can be deleted without affecting CRDs; CRDs are only removed
 if you delete them manually.
 
-# Sidecar Containers
+## Sidecar Containers
 
 The chart can deploy additional containers along with the Kong and Ingress
 Controller containers, sometimes referred to as "sidecar containers".  This can

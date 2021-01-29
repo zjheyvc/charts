@@ -6,17 +6,17 @@ This chart bootstraps all the components needed to run Kong on a
 [Kubernetes](http://kubernetes.io) cluster using the
 [Helm](https://helm.sh) package manager.
 
-# TL;DR;
+## TL;DR;
 
 ```bash
 $ helm repo add kong https://charts.konghq.com
 $ helm repo update
 
-# Helm 3
+## Helm 3
 $ helm install kong/kong --generate-name
 ```
 
-# Seeking help
+## Seeking help
 
 If you run into an issue, bug or have a question, please reach out to the Kong
 community via [Kong Nation](https://discuss.konghq.com).

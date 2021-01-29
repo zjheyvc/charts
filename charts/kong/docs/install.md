@@ -1,4 +1,4 @@
-# Install
+## Install
 
 To install Kong:
 
@@ -6,11 +6,11 @@ To install Kong:
 $ helm repo add kong https://charts.konghq.com
 $ helm repo update
 
-# Helm 3
+## Helm 3
 $ helm install kong/kong --generate-name --set ingressController.installCRDs=false
 ```
 
-# Uninstall
+## Uninstall
 
 To uninstall/delete a Helm release `my-release`:
 
@@ -23,7 +23,7 @@ chart and deletes the release.
 
 > **Tip**: List all releases using `helm list`
 
-# Kong Enterprise prerequisites
+## Kong Enterprise prerequisites
 
 If using Kong Enterprise, several additional steps are necessary before
 installing the chart:
@@ -43,7 +43,7 @@ Please read through
 [Kong Enterprise considerations](#kong-enterprise-parameters)
 to understand all settings that are enterprise specific.
 
-# Example configurations
+## Example configurations
 
 Several example values.yaml are available in the
 [example-values](https://github.com/Kong/charts/blob/main/charts/kong/example-values/)

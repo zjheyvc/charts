@@ -1,4 +1,4 @@
-# Kong parameters
+## Kong parameters
 
 | Parameter                          | Description                                                                           | Default             |
 | ---------------------------------- | ------------------------------------------------------------------------------------- | ------------------- |
@@ -20,7 +20,7 @@
 | dblessConfig.configMap             | Name of an existing ConfigMap containing the `kong.yml` file. This must have the key `kong.yml`.| `` |
 | dblessConfig.config                | Yaml configuration file for the dbless (declarative) configuration of Kong | see in `values.yaml`    |
 
-## Kong Service Parameters
+### Kong Service Parameters
 
 The various `SVC.*` parameters below are common to the various Kong services
 (the admin API, proxy, Kong Manger, the Developer Portal, and the Developer
@@ -79,7 +79,7 @@ nodes.
 | SVC.ingress.annotations            | Ingress annotations. See documentation for your ingress controller for details        | `{}`                |
 | SVC.annotations                    | Service annotations                                                                   | `{}`                |
 
-## Stream listens
+### Stream listens
 
 The proxy configuration additionally supports creating stream listens. These
 are configured using an array of objects under `proxy.stream`:
@@ -92,7 +92,7 @@ are configured using an array of objects under `proxy.stream`:
 | hostPort                           | Host port to use for a stream listen                                                  |                     |
 | parameters                         | Array of additional listen parameters                                                 | `[]`                |
 
-# Ingress Controller Parameters
+## Ingress Controller Parameters
 
 All of the following properties are nested under the `ingressController`
 section of `values.yaml` file:
@@ -119,7 +119,7 @@ For a complete list of all configuration values you can set in the
 `env` section, please read the Kong Ingress Controller's
 [configuration document](https://github.com/Kong/kubernetes-ingress-controller/blob/main/docs/references/cli-arguments.md).
 
-# General Parameters
+## General Parameters
 
 | Parameter                          | Description                                                                           | Default             |
 | ---------------------------------- | ------------------------------------------------------------------------------------- | ------------------- |
@@ -158,7 +158,7 @@ For a complete list of all configuration values you can set in the
 | extraSecrets                       | Secrets to add to mounted volumes                                                     | `[]`                |
 
 
-# The `env` section
+## The `env` section
 
 The `env` section can be used to configured all properties of Kong.
 Any key value put under this section translates to environment variables
@@ -187,9 +187,9 @@ For complete list of Kong configurations please check the
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
 
-# Kong Enterprise Parameters
+## Kong Enterprise Parameters
 
-## Overview
+### Overview
 
 Kong Enterprise requires some additional configuration not needed when using
 Kong Open-Source. To use Kong Enterprise, at the minimum,
@@ -211,9 +211,9 @@ Some of the more important configuration is grouped in sections
 under the `.enterprise` key in values.yaml, though most enterprise-specific
 configuration can be placed under the `.env` key.
 
-## Prerequisites
+### Prerequisites
 
-### Kong Enterprise License
+#### Kong Enterprise License
 
 All Kong Enterprise deployments require a license. If you do not have a copy
 of yours, please contact Kong Support. Once you have it, you will need to
@@ -345,5 +345,3 @@ that these have limited functionality without sending email.
 If your SMTP server requires authentication, you must provide the `username` and `smtp_password_secret` keys under `.enterprise.smtp.auth`. `smtp_password_secret` must be a Secret containing an `smtp_password` key whose value is your SMTP password.
 
 By default, SMTP uses `AUTH` `PLAIN` when you provide credentials. If your provider requires `AUTH LOGIN`, set `smtp_auth_type: login`.
-
-
