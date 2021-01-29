@@ -24,7 +24,7 @@ migrations finish`.
 
 If you split your Kong deployment across multiple Helm releases (to create
 proxy-only and admin-only nodes, for example), you must
-[set which migration jobs run based on your upgrade order](https://github.com/Kong/charts/blob/main/charts/kong/README.md#separate-admin-and-proxy-nodes).
+[set which migration jobs run based on your upgrade order](./deployment-options.md#separate-admin-and-proxy-nodes).
 
 While the migrations themselves are automated, the chart does not automatically
 ensure that you follow the recommended upgrade path. If you are upgrading from
@@ -194,7 +194,7 @@ Enterprise deployments now use the `kong-enterprise-edition` image.
 Existing users of the `kong-enterprise-k8s` image can use the latest
 `kong-enterprise-edition` image as a drop-in replacement for the
 `kong-enterprise-k8s` image. You will also need to [create a Docker registry
-secret](https://github.com/Kong/charts/blob/main/charts/kong/README.md#kong-enterprise-docker-registry-access)
+secret](./configuration.md#kong-enterprise-docker-registry-access)
 for the `kong-enterprise-edition` registry and add it to `image.pullSecrets` in
 values.yaml if you do not have one already.
 
@@ -292,9 +292,9 @@ values.yaml.
 
 The new format addresses several needs:
 * The initial migrations job are only created during the initial install,
-  preventing [conflicts on upgrades](https://github.com/Kong/charts/blob/main/charts/kong/FAQs.md#running-helm-upgrade-fails-because-of-old-init-migrations-job).
+  preventing [conflicts on upgrades](./troubleshooting.md#running-helm-upgrade-fails-because-of-old-init-migrations-job).
 * The upgrade migrations jobs can be disabled as need for managing
-  [multi-release clusters](https://github.com/Kong/charts/blob/main/charts/kong/README.md#separate-admin-and-proxy-nodes).
+  [multi-release clusters](./deployment-options.md#separate-admin-and-proxy-nodes).
   This enables management of clusters that have nodes with different roles,
   e.g. nodes that only run the proxy and nodes that only run the admin API.
 * Migration jobs now allow specifying annotations, and provide a default set
