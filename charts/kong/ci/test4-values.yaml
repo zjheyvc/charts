@@ -1,6 +1,9 @@
 # CI test for testing dbless deployment without ingress controllers using legacy admin listen and stream listens
 # TODO: remove legacy admin listen behavior at a future date
 # - disable ingress controller
+# TODO re-enable this when https://github.com/Kong/kong/issues/6827 is fixed
+waitImage:
+  enabled: false
 ingressController:
   enabled: false
   installCRDs: false
